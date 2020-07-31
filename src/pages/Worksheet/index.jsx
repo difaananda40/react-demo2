@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Container,
   Row,
@@ -22,26 +22,26 @@ const Worksheet = () => {
   });
 
   // handleForm effect
-  useEffect(() => {
-    console.log('clicked')
-    return () => {
-      setState(prev => ({
-        ...prev,
-        showForm: !prev.showForm,
-      }))
-    }
-  }, [state.mode])
+  // useEffect(() => {
+  //   return () => {
+  //     setState(prev => ({
+  //       ...prev,
+  //       showForm: !prev.showForm,
+  //     }))
+  //   }
+  // }, [state.mode])
 
-  const handleForm = (event) => {
+  const handleForm = useCallback((event) => {
     const { name } = event.target;
     setState(prev => ({
       ...prev,
       mode: name || null,
-      ...(!name && {selectedData: null})
+      ...((!name || name === 'create') && {selectedData: null}),
+      showForm: !prev.showForm
     }))
-  }
+  }, []);
 
-  const submitForm = (data, mode) => {
+  const submitForm = useCallback((data, mode) => {
     if(mode === 'create') {
       setState(prev => ({
         ...prev,
@@ -54,7 +54,7 @@ const Worksheet = () => {
     }
     else if(mode === 'edit') {
       let newData = [...state.data];
-      let editedDataId = newData.findIndex(dt => dt.key === data.key);
+      let editedDataId = newData.findIndex(dt => dt.worksheetId === data.worksheetId);
       newData[editedDataId] = data;
       setState(prev => ({
         ...prev,
@@ -67,16 +67,16 @@ const Worksheet = () => {
       ...prev,
       showForm: false
     }))
-  }
+  }, []);
 
-  const selectData = (data) => {
+  const selectData = useCallback((data) => {
     setState(prev => ({
       ...prev,
       selectedData: data
     }))
-  }
+  }, []);
 
-  const deleteData = (e) => {
+  const deleteData = useCallback((e) => {
     e.preventDefault();
     const { data, selectedData } = state;
     if(window.confirm('Are you sure to delete this data?')) {
@@ -87,7 +87,7 @@ const Worksheet = () => {
         mode: null,
       }))
     }
-  }
+  }, []);
 
   return (
     <Container fluid className="p-4" style={{ backgroundColor: '#F2F2F2' }}>

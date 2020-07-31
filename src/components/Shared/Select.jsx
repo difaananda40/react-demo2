@@ -26,9 +26,9 @@ const styles = {
   })
 }
 
-const Select = (props) => (
+const Select = ({ disabled, ...props}) => (
   <Fragment>
-    <ReactSelect styles={styles} {...props} />
+    <ReactSelect styles={styles} isDisabled={disabled} {...props} />
     {props.isInvalid && (
       <div className="custom-input-error">
         {props.isInvalid.message}

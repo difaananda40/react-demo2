@@ -28,3 +28,8 @@
   font-size: 80%;
   color: #dc3545;
 }
+
+.nav-tabs .nav-link {
+  background-color: #2196F3;
+  color: white;
+}
